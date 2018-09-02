@@ -1,0 +1,83 @@
+body,
+h2 {
+    margin: 0;
+}
+
+ul {
+    margin: 0;
+    padding: 0;
+}
+
+li {
+    list-style: none;
+}
+
+body {
+    background: url(img/bg.png) 100% 100%;
+}
+
+.qq-box {
+    width: 384px;
+    height: 707px;
+    overflow: hidden;
+    box-sizing: border-box;
+    margin: 10px auto;
+    background: url(img/bg1.png);
+    color: #fff;
+}
+
+.qq-box-content {
+    width: 300px;
+    margin: 80px auto;
+}
+
+.qq-box-content h2 {
+    font-size: 18px;
+    height: 48px;
+    line-height: 48px;
+    background: #333;
+    opacity: .9;
+    margin-top: 10px;
+    cursor: pointer;
+}
+
+.qq-box-content h2.open {
+    background: #d72a2a;
+}
+
+.qq-box-content h2 span {
+    display: inline-block;
+    width: 0px;
+    height: 0px;
+    margin: 0 1em;
+    border-top: 6px solid transparent;
+    border-right: 0px solid transparent;
+    border-bottom: 6px solid transparent;
+    border-left: 6px solid #fff;
+    transition: .2s;
+}
+
+.qq-box-content h2.open span {
+    display: inline-block;
+    width: 0;
+    height: 0;
+    margin: 0 1em;
+    border-width: 6px;
+    border-style: solid;
+    border-color: #fff transparent transparent transparent;
+    position: relative;
+    top: 2px;
+}
+
+.qq-box-content ul {
+    background: #333;
+    opacity: .8;
+    display: none;
+}
+
+.qq-box-content ul li {
+    font-size: 16px;
+    height: 30px;
+    line-height: 30px;
+    text-indent: 4em;
+}
