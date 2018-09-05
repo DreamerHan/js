@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" href="./layout.css">
+    <script src="../js/vue.js"></script>
+</head>
+
+<body>
+
+    <div class="qq-box" id="app">
+        <div class="qq-box-content">
+            <div v-for="item,index of qqList">
+                <h2 @click="handlerClick(index)" :class="{open : openIndex === index}">
+                    <span></span>{{item.title}}
+                </h2>
+                <ul :style="{display: openIndex === index ? 'block' : 'none'}">
+                    <li v-for="option of item.children">{{option}}</li>
+                </ul>
+            </div>
+
+        </div>
+    </div>
+</body>
+<script>
+    new Vue({
+        el: '#app',
+        data: {
+            openIndex: -1,
+            qqList: [{
+                title: '我的好友',
+                children: ['vue', 'react', 'node.js', '微信小程序']
+            }, {
+                title: '我的搭档',
+                children: ['java', 'php', 'c++']
+            }, {
+                title: '我的黑名单',
+                children: ['没钱', '没房', '没工作']
+            }]
+        },
+        methods: {
+            handlerClick(index) {
+                if (this.openIndex === index) {
+                    this.openIndex = -1;
+                } else {
+                    this.openIndex = index;
+                }
+            }
+        }
+    });
+</script>
+
+</html>

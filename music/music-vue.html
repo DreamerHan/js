@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" href="./music.css">
+    <script src="../js/vue.js"></script>
+</head>
+
+<body>
+    <div class="wrap" id="app">
+        <div class="add-box">
+            <span>歌手：</span><input type="text" v-model="addForm.name">
+            <span>歌曲：</span><input type="text" v-model="addForm.song">
+            <span>数量：</span><input type="text" v-model="addForm.album">
+            <button @click="handleSubmit">提交</button>
+        </div>
+        <div class="baidu">
+            <ul class="list list-head">
+                <li>
+                    <div>
+                        <input type="checkbox" v-model="isCheckedAll" />全选
+                    </div>
+                    <span>歌单</span>
+                    <span>歌手</span>
+                    <span>专辑</span>
+                </li>
+            </ul>
+            <ul class="list list-body">
+                <li v-for="item,index of musicList" :class="{checkedColor : item.checked}">
+                    <div>
+                        <input type="checkbox" v-model="item.checked">
+                    </div>
+                    <span>{{item.name}}</span>
+                    <span>{{item.song}}</span>
+                    <span>{{item.album}}</span>
+                </li>
+            </ul>
+            <div class="select">
+                <span class="selectAll">
+                    <span>统计：</span>
+                </span>
+                <div class="others">
+                    <span>
+                        <em></em>歌手有：{{musicList.length}}位
+                    </span>
+                    <span>
+                        <em></em>专辑有{{albumNum}}张
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        new Vue({
+            el: '#app',
+            data: {
+                addForm: {
+                    name: '',
+                    song: '',
+                    album: ''
+                },
+                musicList: [{
+                    id: Date.now() + Math.random(),
+                    name: '邓紫棋',
+                    song: '泡沫',
+                    checked: false,
+                    album: 10
+                }, {
+                    id: Date.now() + Math.random(),
+                    name: '王杰',
+                    song: '泡沫',
+                    checked: false,
+                    album: 10
+                }, {
+                    id: Date.now() + Math.random(),
+                    name: '邓紫棋',
+                    song: '泡沫',
+                    checked: false,
+                    album: 10
+                }]
+            },
+            methods: {
+                handleSubmit() {
+                    let newForm = {
+                        ...this.addForm,
+                        checked: false,
+                        id: Date.now() + Math.random()
+                    }
+
+                    this.musicList.push(newForm);
+
+                }
+            },
+            computed: {
+                albumNum() {
+                    return this.musicList.reduce((item1, item2) => {
+                        return {
+                            album: item1.album + item2.album
+                        }
+                    })['album']
+                },
+                isCheckedAll: {
+                    get() {
+                        return this.musicList.every(item => {
+                            return item.checked;
+                        })
+                    },
+                    set(value) {
+                        this.musicList.forEach(item => {
+                            item.checked = value;
+                        })
+                    }
+                }
+            }
+        });
+    </script>
+
+</body>
+
+</html>
