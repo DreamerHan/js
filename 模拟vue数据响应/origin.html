@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+
+<body>
+    <p id="title"></p>
+    <button id="btn">改变内容</button>
+</body>
+<script>
+    let title = document.querySelector('#title');
+    let btn = document.querySelector('#btn');
+
+    let data = {
+        value: '模拟vue的数据响应原理'
+    }
+
+    title.innerHTML = data.value;
+
+    btn.onclick = function() {
+        data.value = '改变了';
+
+        //此时需要在这里动态的再次处理innerHTML的值
+        title.innerHTML = data.value;
+    }
+</script>
+
+</html>

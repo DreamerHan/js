@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+
+<body>
+    <p id="title"></p>
+    <button id="btn">改变内容</button>
+    <p id="compare"></p>
+</body>
+<script>
+    let title = document.querySelector('#title');
+    let compare = document.querySelector('#compare');
+    let btn = document.querySelector('#btn');
+
+    let data = {
+        value: '模拟vue的数据响应原理',
+        message: 'proxy模拟数据'
+    }
+
+    //数据在赋值到DOM前进行劫持
+    data = observer(data)
+
+    title.innerHTML = data.value;
+    compare.innerHTML = data.message;
+
+    btn.onclick = function() {
+        data.value = '改变了';
+        console.log(data);
+    }
+
+    function observer(data) {
+        return new Proxy(data, {
+            get(target, attr) {
+                return target[attr];
+            },
+            set(target, attr, newValue) {
+                console.log(attr);
+                console.log(newValue);
+                //设定watch监听并定制发布模式，这里直接赋值
+                title.innerHTML = newValue;
+
+            }
+        })
+    }
+</script>
+
+</html>

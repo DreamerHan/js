@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+
+<body>
+    <p id="title"></p>
+    <button id="btn">改变内容</button>
+</body>
+<script>
+    let title = document.querySelector('#title');
+    let btn = document.querySelector('#btn');
+
+    let data = {
+        value: '模拟vue的数据响应原理',
+        message: 'vue的data是一个数据的json集合'
+    }
+
+    //在给DOM添加值之前进行数据劫持
+    observer(data);
+
+    title.innerHTML = data.value;
+
+    btn.onclick = function() {
+        data.value = '改变了';
+    }
+
+    function observer(data) {
+        //获取要劫持的data的所有key值，进行一一遍历
+        Object.keys(data).forEach(item => {
+            //使用Object.defineProperty( 要处理的对象obj, 对象的key值, 描述对象/访问器(get和set) )
+            //将数据转化成 get 和 set代理的模式
+            defineReactive(data, item, data[item]);
+        })
+    }
+    //可以直接了解 Object.defineProperty()
+    function defineReactive(obj, key, value) {
+        Object.defineProperty(obj, key, {
+            get() { //get 表示取值，所以直接返回对应的value值即可
+                return value;
+            },
+            set(newValue) {
+                value = newValue;
+
+                //vue中这里会watch 各个属性值的变化，然后发布改值
+                //自己模拟这里直接赋值
+                title.innerHTML = newValue;
+            }
+        })
+    }
+</script>
+
+<!-- 
+    备注： 
+        json对象本身就可以有set 和 get 模式
+        参考 json的get和set.html
+ -->
+
+</html>
