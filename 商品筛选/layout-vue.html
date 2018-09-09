@@ -15,13 +15,19 @@
     <div id="wrap">
         <div class="header">
             你的选择：
-            <mark v-for="item of selectedArr">{{item}}<span>X</span></mark>
+            <mark v-for="(item,itemKey) of selectedArr">
+                {{item}}
+                <span @click="handleClose(itemKey)">X</span>
+            </mark>
         </div>
         <div class="box">
             <ul>
-                <li v-for="item of choseList">
+                <li v-for="(item,itemIndex) of choseList">
                     {{item.title}}：
-                    <a href="javascript:;" v-for="option of item.list">
+                    <a href="javascript:;" v-for="(option,optionIndex) of item.list" 
+                        @click="handleChose(item,optionIndex, option, itemIndex)" 
+                        :class="{active : item.choseIndex === optionIndex}"
+                    >
                         {{option}}
                     </a>
                 </li>
@@ -45,10 +51,32 @@
                     title: '网络',
                     list: ['联通3G', '双卡单4G', '双卡双4G', '联通4G', '电信4G', '移动4G']
                 }],
-                selectedArr: []
+                selectedArr: {}
+            },
+            methods: {
+                handleChose(row, optionIndex, option, itemIndex) {
+                    this.$set(row, 'choseIndex', optionIndex);
+
+                    this.$set(this.selectedArr, itemIndex, option);
+                },
+                handleClose(itemKey){
+                    this.$delete(this.selectedArr, itemKey );
+                    this.choseList[itemKey].choseIndex = -1;
+                }
             }
         })
     </script>
+    <!-- 
+        selectedArr: {} 数据需求
+            selectedArr: {
+                0 ：第一行选中的内容
+                1 : 第二行选中的内容
+                2 ：第三行选中的内容
+                3 ：第四行选中的内容
+            }
+            所以，需要每一行的索引值作为唯一的key值，
+            每一行的每一个点中的option作为value值互相覆盖前者使得每一行只有一个选择结果
+     -->
 </body>
 
 </html>

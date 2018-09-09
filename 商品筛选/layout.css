@@ -18,7 +18,7 @@ a {
 #wrap {
     width: 1000px;
     height: 500px;
-    margin: 200px auto;
+    margin: 100px auto;
     box-sizing: border-box;
     padding: 130px 0;
     background: url(./img/bg.jpg) no-repeat;
@@ -42,6 +42,8 @@ a {
     background: none;
     box-sizing: border-box;
     padding: 2px 3px;
+    margin-right:10px;
+    font-size:13px;
 }
 
 #wrap .header mark span {
