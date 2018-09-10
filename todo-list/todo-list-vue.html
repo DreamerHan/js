@@ -7,47 +7,37 @@
     <link rel="stylesheet" type="text/css" href="css/base.css">
     <link rel="stylesheet" type="text/css" href="css/index.css">
 </head>
+<style>
+    [v-cloak] {
+        display: none;
+    }
+</style>
 
 <body>
-    <section class="todoapp">
+    <section class="todoapp" id="app" v-cloak>
         <div>
             <header class="header">
                 <h1>todos</h1>
-                <input class="new-todo" placeholder="请输入内容" />
+                <input class="new-todo" placeholder="请输入内容" v-model="todoVal" @keyup.enter="addTodo" />
             </header>
-            <section class="main">
-                <input class="toggle-all" type="checkbox" />
+            <section class="main" v-if="taskList.length">
+                <input class="toggle-all" type="checkbox" v-model="isCheckedAll" />
                 <ul class="todo-list">
-                    <li class="completed editing">
+                    <!--  editing -->
+                    <li :class="{completed : item.checked}" v-for="item,index of taskList">
                         <div class="view">
-                            <input class="toggle" type="checkbox" />
-                            <label>miaoweiketang</label>
-                            <button class="destroy"></button>
-                        </div>
-                        <input class="edit" />
-                    </li>
-                    <li class="">
-                        <div class="view">
-                            <input class="toggle" type="checkbox" />
-                            <label>miaoweiketang</label>
-                            <button class="destroy"></button>
-                        </div>
-                        <input class="edit" />
-                    </li>
-                    <li class="completed">
-                        <div class="view">
-                            <input class="toggle" type="checkbox" />
-                            <label>miaoweiketang</label>
-                            <button class="destroy"></button>
+                            <input class="toggle" type="checkbox" v-model="item.checked" />
+                            <label>{{item.title}}</label>
+                            <button class="destroy" @click="deleteTodo(index)"></button>
                         </div>
                         <input class="edit" />
                     </li>
                 </ul>
             </section>
-            <footer class="footer">
+            <footer class="footer" v-if="taskList.length">
                 <span class="todo-count">
-	            	<strong>0</strong>
-	            	<span>条未选中</span>
+                <strong>0</strong>
+                <span>条未选中</span>
                 </span>
                 <ul class="filters">
                     <li><a href="#/all" class="selected">All</a></li>
@@ -58,5 +48,53 @@
         </div>
     </section>
 </body>
+<script src="../js/vue.js"></script>
+<script>
+    new Vue({
+        el: '#app',
+        data: {
+            todoVal: '',
+            taskList: []
+        },
+        methods: {
+            addTodo() {
+                this.taskList.push({
+                    title: this.todoVal,
+                    id: Date.now() + Math.random(),
+                    checked: false
+                })
+                this.todoVal = '';
+            },
+            deleteTodo(index) {
+                this.taskList.splice(index, 1);
+            }
+        },
+        computed: {
+            isCheckedAll: {
+                get() {
+                    return this.taskList.every(item => {
+                        return item.checked;
+                    })
+                },
+                set(value) {
+                    this.taskList.forEach(item => {
+                        item.checked = value;
+                    })
+                }
+            }
+        }
+    });
+    /*
+        {
+            id: Date.now() + Math.random(),
+            title: '假数据1',
+            checked: false
+        }, {
+            id: Date.now() + Math.random(),
+            title: '假数据2',
+            checked: false
+        }
+    */
+</script>
 
 </html>
