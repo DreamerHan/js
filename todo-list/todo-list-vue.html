@@ -23,20 +23,24 @@
             <section class="main" v-if="taskList.length">
                 <input class="toggle-all" type="checkbox" v-model="isCheckedAll" />
                 <ul class="todo-list">
-                    <!--  editing -->
-                    <li :class="{completed : item.checked}" v-for="item,index of taskList">
+                    <li :class="{completed : item.checked, editing : index === editIndex }" v-for="item,index of taskList">
                         <div class="view">
                             <input class="toggle" type="checkbox" v-model="item.checked" />
-                            <label>{{item.title}}</label>
+                            <label @dblclick="editTodo(index)">{{item.title}}</label>
                             <button class="destroy" @click="deleteTodo(index)"></button>
                         </div>
-                        <input class="edit" />
+                        <input ref="editInp" class="edit" 
+                            v-model="item.title" 
+                            @keyup.enter="editDone(item)" 
+                            @blur="editDone(item)" 
+                            @keyup.esc="handleEscTodo(item)" 
+                        />
                     </li>
                 </ul>
             </section>
             <footer class="footer" v-if="taskList.length">
                 <span class="todo-count">
-                <strong>0</strong>
+                <strong>{{unCheckedLen}}</strong>
                 <span>条未选中</span>
                 </span>
                 <ul class="filters">
@@ -54,6 +58,8 @@
         el: '#app',
         data: {
             todoVal: '',
+            editIndex: -1,
+            beforeEidt: '',
             taskList: []
         },
         methods: {
@@ -67,6 +73,24 @@
             },
             deleteTodo(index) {
                 this.taskList.splice(index, 1);
+            },
+            editTodo(index) {
+                this.beforeEidt = this.taskList[index].title;
+                this.editIndex = index;
+                this.$nextTick(() => {
+                    this.$refs['editInp'][index].focus();
+                })
+            },
+            editDone(item){
+                if( item.title === '' ){
+                    let posIndex = this.taskList.findIndex( option => option === item );
+                    this.deleteTodo(posIndex)
+                }
+                this.editIndex = -1;
+            },
+            handleEscTodo(item) {
+                item.title = this.beforeEidt;
+                this.editIndex = -1;
             }
         },
         computed: {
@@ -81,6 +105,9 @@
                         item.checked = value;
                     })
                 }
+            },
+            unCheckedLen(){
+                return this.taskList.filter( item => item.checked === false ).length;
             }
         }
     });
