@@ -7,38 +7,32 @@
     <link rel="stylesheet" type="text/css" href="css/base.css">
     <link rel="stylesheet" type="text/css" href="css/index.css">
 </head>
-
+<style>
+    [v-cloak]{
+        display:none;
+    }
+</style>
 <body>
-    <section class="todoapp">
+    <section class="todoapp" v-cloak>
         <div>
             <header class="header">
                 <h1>todos</h1>
-                <input class="new-todo" placeholder="请输入内容" />
+                <input class="new-todo" placeholder="请输入内容" 
+                    v-model="todoVal"
+                    @keyup.enter = "handleAdd"
+                />
             </header>
             <section class="main">
-                <input class="toggle-all" type="checkbox" />
+                <input class="toggle-all" type="checkbox" v-model="isCheckedAll" />
                 <ul class="todo-list">
-                    <li class="completed editing">
+                    <!-- class="completed editing" -->
+                    <li v-for="item of taskList" :key="item.id"
+                        :class="{completed : item.checked}"
+                    >
                         <div class="view">
-                            <input class="toggle" type="checkbox" />
-                            <label>miaoweiketang</label>
-                            <button class="destroy"></button>
-                        </div>
-                        <input class="edit" />
-                    </li>
-                    <li class="">
-                        <div class="view">
-                            <input class="toggle" type="checkbox" />
-                            <label>miaoweiketang</label>
-                            <button class="destroy"></button>
-                        </div>
-                        <input class="edit" />
-                    </li>
-                    <li class="completed">
-                        <div class="view">
-                            <input class="toggle" type="checkbox" />
-                            <label>miaoweiketang</label>
-                            <button class="destroy"></button>
+                            <input class="toggle" type="checkbox" v-model="item.checked"/>
+                            <label>{{item.title}}</label>
+                            <button class="destroy" @click="handleDelete"></button>
                         </div>
                         <input class="edit" />
                     </li>
@@ -58,5 +52,56 @@
         </div>
     </section>
 </body>
+<script src="../js/vue.js"></script>
+<script>
+    new Vue({
+        el : '.todoapp',
+        data(){
+            return {
+                todoVal : '',
+                taskList : [
+                    {
+                        id : Date.now() + Math.random(),
+                        title : '假任务',
+                        checked : false
+                    },
+                    {
+                        id: Date.now() + Math.random(),
+                        title: '假任务',
+                        checked: false
+                    }
+                ]
+            }
+        },
+        methods : {
+            handleAdd(){ //新增任务
+                if(this.todoVal === ''){
+                    alert('请输入内容后添加！');
+                    return;
+                }                  
+                this.taskList.push({
+                    title : this.todoVal,
+                    id : Date.now() + Math.random(),
+                    checked : false
+                })
+                this.todoVal = '';
+            },
+            handleDelete(){ //删除任务
 
+            }
+        },
+        computed : {
+            isCheckedAll : {
+                get() {
+                    return this.taskList.every(item => item.checked)
+                },
+                set(newValue){
+                    this.taskList.forEach( item => {
+                        item.checked = newValue;
+                    })
+                }
+            }
+        }
+    });
+</script>
 </html>
