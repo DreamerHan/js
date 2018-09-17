@@ -38,10 +38,10 @@
                     </li>
                 </ul>
             </section>
-            <footer class="footer">
+            <footer class="footer" v-if="taskList.length">
                 <span class="todo-count">
-	            	<strong>0</strong>
-	            	<span>条未选中</span>
+                <strong>{{unCheckedLen}}</strong>
+                <span>条未选中</span>
                 </span>
                 <ul class="filters">
                     <li><a href="#/all" class="selected">All</a></li>
@@ -87,7 +87,6 @@
                 this.todoVal = '';
             },
             handleDelete(){ //删除任务
-
             }
         },
         computed : {
