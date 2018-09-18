@@ -20,7 +20,7 @@
                 <h1>todos</h1>
                 <input class="new-todo" placeholder="请输入内容" v-model="todoVal" @keyup.enter="handleAdd" />
             </header>
-            <section class="main">
+            <section class="main" v-if="taskList.length">
                 <input class="toggle-all" type="checkbox" v-model="isCheckedAll" />
                 <ul class="todo-list">
                     <li v-for="(item,index) of filterTaskList" :key="item.id" :class="{completed : item.checked, editing : index === editIndex}">
@@ -62,23 +62,15 @@
                 editIndex: -1,
                 beforeEdit : '',
                 nowHash : 'all',
-                taskList: [{
-                    id: Date.now() + Math.random(),
-                    title: '假任务1',
-                    checked: false
-                }, {
-                    id: Date.now() + Math.random(),
-                    title: '假任务2',
-                    checked: false
-                },{
-                    id: Date.now() + Math.random(),
-                    title: '假任务3',
-                    checked: false
-                }, {
-                    id: Date.now() + Math.random(),
-                    title: '假任务4',
-                    checked: false
-                }]
+                taskList: JSON.parse(localStorage.getItem('tasks')) || []
+            }
+        },
+        watch : {
+            taskList : {
+                handler(){
+                    localStorage.setItem('tasks', JSON.stringify(this.taskList) );
+                },
+                deep : true
             }
         },
         methods: {
@@ -95,8 +87,9 @@
                 this.todoVal = '';
             },
             handleDelete(item) { //删除任务
-                console.log(this.filterTaskList);
-                this.filterTaskList.splice(index, 1);
+                let posIndex = this.taskList.findIndex(option => option === item);
+
+                this.taskList.splice(posIndex, 1);
             },
             handleEdit(index) { //开启编辑
                 this.beforeEdit = this.taskList[index].title;
@@ -111,12 +104,11 @@
                     return;
                 }
                 if( item.title === '' ){
-                    let posIndex = this.taskList.findIndex( option => option === item );
-                    this.handleDelete(posIndex);
+                    this.handleDelete(item);
                 }
                 this.editIndex = -1;
             },
-            cancelEdit(item){
+            cancelEdit(item){ //取消编辑
                 item.title = this.beforeEdit;
                 this.editIndex = -1;
             }
@@ -161,6 +153,26 @@
 
         vm.nowHash = hash;
     }
+    /*
+        {
+            id: Date.now() + Math.random(),
+            title: '假任务1',
+            checked: false
+        }, {
+            id: Date.now() + Math.random(),
+            title: '假任务2',
+            checked: false
+        },{
+            id: Date.now() + Math.random(),
+            title: '假任务3',
+            checked: false
+        }, {
+            id: Date.now() + Math.random(),
+            title: '假任务4',
+            checked: false
+        }
+    
+    */ 
 </script>
 
 
