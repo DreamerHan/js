@@ -14,26 +14,26 @@
 </style>
 
 <body>
-    <section class="todoapp" id="app" v-cloak>
+    <section class="todoapp" v-cloak>
         <div>
             <header class="header">
                 <h1>todos</h1>
-                <input class="new-todo" placeholder="请输入内容" v-model="todoVal" @keyup.enter="addTodo" />
+                <input class="new-todo" placeholder="请输入内容" v-model="todoVal" @keyup.enter="handleAdd" />
             </header>
-            <section class="main" v-if="taskList.length">
+            <section class="main">
                 <input class="toggle-all" type="checkbox" v-model="isCheckedAll" />
                 <ul class="todo-list">
-                    <li :class="{completed : item.checked, editing : index === editIndex }" v-for="item,index of hashList">
+                    <li v-for="(item,index) of filterTaskList" :key="item.id" :class="{completed : item.checked, editing : index === editIndex}">
                         <div class="view">
                             <input class="toggle" type="checkbox" v-model="item.checked" />
-                            <label @dblclick="editTodo(index)">{{item.title}}</label>
-                            <button class="destroy" @click="deleteTodo(index)"></button>
+                            <label @dblclick="handleEdit(index)">{{item.title}}</label>
+                            <button class="destroy" @click="handleDelete(item)"></button>
                         </div>
                         <input ref="editInp" class="edit" 
                             v-model="item.title" 
-                            @keyup.enter="editDone(item)" 
-                            @blur="editDone(item)" 
-                            @keyup.esc="handleEscTodo(item)" 
+                            @keyup.enter="doneEdit($event, item)"
+                            @blur="doneEdit($event, item)"
+                            @keyup.esc="cancelEdit(item)"
                         />
                     </li>
                 </ul>
@@ -55,16 +55,38 @@
 <script src="../js/vue.js"></script>
 <script>
     let vm = new Vue({
-        el: '#app',
-        data: {
-            todoVal: '',
-            editIndex: -1,
-            beforeEidt: '',
-            taskList: [],
-            nowHash : 'all'
+        el: '.todoapp',
+        data() {
+            return {
+                todoVal: '',
+                editIndex: -1,
+                beforeEdit : '',
+                nowHash : 'all',
+                taskList: [{
+                    id: Date.now() + Math.random(),
+                    title: '假任务1',
+                    checked: false
+                }, {
+                    id: Date.now() + Math.random(),
+                    title: '假任务2',
+                    checked: false
+                },{
+                    id: Date.now() + Math.random(),
+                    title: '假任务3',
+                    checked: false
+                }, {
+                    id: Date.now() + Math.random(),
+                    title: '假任务4',
+                    checked: false
+                }]
+            }
         },
         methods: {
-            addTodo() {
+            handleAdd() { //新增任务
+                if (this.todoVal === '') {
+                    alert('请输入内容后添加！');
+                    return;
+                }
                 this.taskList.push({
                     title: this.todoVal,
                     id: Date.now() + Math.random(),
@@ -72,55 +94,55 @@
                 })
                 this.todoVal = '';
             },
-            deleteTodo(index) {
-                this.taskList.splice(index, 1);
+            handleDelete(item) { //删除任务
+                console.log(this.filterTaskList);
+                this.filterTaskList.splice(index, 1);
             },
-            editTodo(index) {
-                this.beforeEidt = this.taskList[index].title;
+            handleEdit(index) { //开启编辑
+                this.beforeEdit = this.taskList[index].title;
                 this.editIndex = index;
                 this.$nextTick(() => {
                     this.$refs['editInp'][index].focus();
                 })
             },
-            editDone(item){
+            doneEdit(e, item){ //编辑完成
+                if( e.type === 'keyup' ){
+                    e.target.blur();
+                    return;
+                }
                 if( item.title === '' ){
                     let posIndex = this.taskList.findIndex( option => option === item );
-                    this.deleteTodo(posIndex)
+                    this.handleDelete(posIndex);
                 }
                 this.editIndex = -1;
             },
-            handleEscTodo(item) {
-                item.title = this.beforeEidt;
+            cancelEdit(item){
+                item.title = this.beforeEdit;
                 this.editIndex = -1;
             }
         },
         computed: {
             isCheckedAll: {
                 get() {
-                    return this.taskList.every(item => {
-                        return item.checked;
-                    })
+                    return this.taskList.every(item => item.checked)
                 },
-                set(value) {
+                set(newValue) {
                     this.taskList.forEach(item => {
-                        item.checked = value;
+                        item.checked = newValue;
                     })
                 }
             },
-            unCheckedLen(){
-                return this.taskList.filter( item => item.checked === false ).length;
+            unCheckedLen() {
+                return this.taskList.filter(item => !item.checked).length;
             },
-            hashList(){
-                switch( this.nowHash ){
+            filterTaskList(){
+                switch (this.nowHash){
                     case 'all' : 
                         return this.taskList;
-                    break;
                     case 'active' : 
-                        return this.taskList.filter( item => !item.checked )
-                    break;
-                    case 'completed' :
-                        return this.taskList.filter( item => item.checked ) 
-                    break;
+                        return this.taskList.filter( item => !item.checked );
+                    case 'completed' : 
+                        return this.taskList.filter( item => item.checked );
                 }
             }
         }
@@ -133,23 +155,13 @@
     }
 
     window.onhashchange = function(){
-        let hash = window.location.hash.slice(2);
+        let hash = window.location.hash.substring(2);
 
-        hash = hashObj[hash] ? hash : 'all'
+        hash = hashObj[hash] ? hash : 'all';
 
         vm.nowHash = hash;
     }
-    /*
-        {
-            id: Date.now() + Math.random(),
-            title: '假数据1',
-            checked: false
-        }, {
-            id: Date.now() + Math.random(),
-            title: '假数据2',
-            checked: false
-        }
-    */
 </script>
+
 
 </html>
