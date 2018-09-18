@@ -23,7 +23,7 @@
             <section class="main" v-if="taskList.length">
                 <input class="toggle-all" type="checkbox" v-model="isCheckedAll" />
                 <ul class="todo-list">
-                    <li :class="{completed : item.checked, editing : index === editIndex }" v-for="item,index of taskList">
+                    <li :class="{completed : item.checked, editing : index === editIndex }" v-for="item,index of hashList">
                         <div class="view">
                             <input class="toggle" type="checkbox" v-model="item.checked" />
                             <label @dblclick="editTodo(index)">{{item.title}}</label>
@@ -44,9 +44,9 @@
                 <span>条未选中</span>
                 </span>
                 <ul class="filters">
-                    <li><a href="#/all" class="selected">All</a></li>
-                    <li><a href="#/active" class="">Active</a></li>
-                    <li><a href="#/completed" class="">Completed</a></li>
+                    <li><a href="#/all" :class="{selected : nowHash === 'all'}">All</a></li>
+                    <li><a href="#/active" :class="{selected : nowHash === 'active'}">Active</a></li>
+                    <li><a href="#/completed" :class="{selected : nowHash === 'completed'}">Completed</a></li>
                 </ul>
             </footer>
         </div>
@@ -54,13 +54,14 @@
 </body>
 <script src="../js/vue.js"></script>
 <script>
-    new Vue({
+    let vm = new Vue({
         el: '#app',
         data: {
             todoVal: '',
             editIndex: -1,
             beforeEidt: '',
-            taskList: []
+            taskList: [],
+            nowHash : 'all'
         },
         methods: {
             addTodo() {
@@ -108,9 +109,36 @@
             },
             unCheckedLen(){
                 return this.taskList.filter( item => item.checked === false ).length;
+            },
+            hashList(){
+                switch( this.nowHash ){
+                    case 'all' : 
+                        return this.taskList;
+                    break;
+                    case 'active' : 
+                        return this.taskList.filter( item => !item.checked )
+                    break;
+                    case 'completed' :
+                        return this.taskList.filter( item => item.checked ) 
+                    break;
+                }
             }
         }
     });
+
+    let hashObj = {
+        all : true,
+        active : true,
+        completed : true
+    }
+
+    window.onhashchange = function(){
+        let hash = window.location.hash.slice(2);
+
+        hash = hashObj[hash] ? hash : 'all'
+
+        vm.nowHash = hash;
+    }
     /*
         {
             id: Date.now() + Math.random(),
